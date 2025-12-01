@@ -1,30 +1,42 @@
 module Day.Day01 (run) where
 
 import Control.Arrow ((>>>))
-import Control.Lens (Each (each), over)
-import Control.Monad (void)
-import Data.List.Extra (sort, splitOn, sumOn')
 import Test.HUnit ((@=?))
-import Text.RawString.QQ (r)
 import Utils (count)
 
-parse :: String -> ([Int], [Int])
-parse = lines >>> map (words >>> map read >>> f) >>> unzip
+data Rotation = L | R deriving (Read, Show)
+
+parse :: String -> [(Rotation, Int)]
+parse = lines >>> map f
  where
-  f [x, y] = (x, y)
+  f (dir : n) = (read @Rotation [dir], read @Int n)
 
-solveA :: ([Int], [Int]) -> Int
-solveA = over each sort >>> uncurry (zipWith (\a b -> abs (a - b))) >>> sum
+countZeros :: [Int] -> Int
+countZeros = count 0 . map (flip mod 100) . scanl (+) start
+ where
+  start = 50
 
-solveB :: ([Int], [Int]) -> Int
-solveB (lefts, rights) = sumOn' (\x -> x * count x rights) lefts
+countExactZeros :: [(Rotation, Int)] -> Int
+countExactZeros = countZeros . map f
+ where
+  f (L, n) = -n
+  f (R, n) = n
+
+countAllZeros :: [(Rotation, Int)] -> Int
+countAllZeros = countZeros . concatMap f
+ where
+  start = 50
+  f (L, n) = replicate n (-1)
+  f (R, n) = replicate n 1
 
 run :: String -> IO ()
-run input = void $ do
+run input = do
   let parsed = parse input
-  let resA = solveA parsed
+
+  let resA = countExactZeros parsed
   print resA
-  resA @=? 2086478
-  let resB = solveB parsed
+  resA @=? 1147
+
+  let resB = countAllZeros parsed
   print resB
-  resB @=? 24941624
+  resB @=? 6789
