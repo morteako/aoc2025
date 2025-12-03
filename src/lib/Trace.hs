@@ -11,7 +11,7 @@ trace :: String -> a -> a
 trace s a = if unsafeDupablePerformIO (readIORef debug) then T.trace (yellow s) a else a
 
 traceLab, tl :: (Show a) => String -> a -> a
-traceLab s x = T.trace (green s ++ ": " ++ yellow (show x)) x
+traceLab s x = trace (green s ++ ": " ++ yellow (show x)) x
 tl = traceLab
 
 traceOn, to :: (Show a) => (a -> String) -> a -> a
