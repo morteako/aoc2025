@@ -26,6 +26,7 @@ library
       Day.Day05
       Day.DayTemplate
       DayVersion
+      IS
       Letter
       Map
       Print
