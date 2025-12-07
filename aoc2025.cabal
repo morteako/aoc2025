@@ -79,6 +79,7 @@ library
     , megaparsec
     , memoize
     , mod
+    , monoidal-containers
     , mtl
     , ordered-containers
     , pqueue
@@ -146,6 +147,7 @@ executable app
     , megaparsec
     , memoize
     , mod
+    , monoidal-containers
     , mtl
     , optparse-applicative
     , ordered-containers

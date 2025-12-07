@@ -2,12 +2,15 @@ module Day.Day07 (run) where
 
 import Control.Arrow (Arrow (..), (>>>))
 
-import Control.Lens ((&))
+import Control.Lens (FoldableWithIndex (ifoldMap), ifoldMapByOf, ifolded, (&))
 import Data.Foldable (Foldable (fold))
 import Data.Functor ((<&>))
 import Data.List (find)
+
 import Data.Map (Map)
-import Data.Map qualified as Map
+import Data.Map qualified as OldMap
+import Data.Map.Monoidal (MonoidalMap)
+import Data.Map.Monoidal qualified as MMap
 import Data.Maybe (fromJust, isNothing)
 import Data.Monoid (Sum)
 import Data.Set (Set)
@@ -27,28 +30,28 @@ parse = parseAsciiMap f
   f 'S' = Just $ Nothing
   f _ = Nothing
 
-type Grid = Map (V2 Int) (Tile)
-
-moveAll :: Grid -> Map (V2 Int) Res -> Map (V2 Int) _
-moveAll grid beams = Map.foldMapWithKey (move grid) beams & Map.fromListWith (<>)
+type Grid = MonoidalMap (V2 Int) (Tile)
 
 type Res = (Sum Int, Set (V2 Int))
 
-move :: Grid -> V2 Int -> Res -> [(V2 Int, Res)]
+move :: Grid -> V2 Int -> Res -> MonoidalMap (V2 Int) (Res)
 move grid pos (count, prevSplitPos) = do
   let n = V2 0 1 + pos
-  case Map.lookup n grid of
-    Nothing -> []
-    Just Empty -> [(n, (count, prevSplitPos))]
-    Just Split -> splitBeam n <&> (\newPos -> (newPos, (count, Set.insert n prevSplitPos)))
+  case MMap.lookup n grid of
+    Nothing -> mempty
+    Just Empty -> MMap.singleton n (count, prevSplitPos)
+    Just Split -> splitBeam n <&> (\newPos -> (newPos, (count, Set.insert n prevSplitPos))) & MMap.fromList
      where
-      splitBeam v = [V2 1 0 + v, V2 (-1) 0 + v] & filter (flip Map.member grid)
+      splitBeam v = [V2 1 0 + v, V2 (-1) 0 + v] & filter (flip MMap.member grid)
 
 solve :: Map (V2 Int) (Maybe Tile) -> _
-solve (getStartAndCleanup -> (start, grid)) = iterate (moveAll grid) (Map.singleton start (1, mempty)) & takeWhile (not . null) & last & fold & (id *** Set.size) & swap
+solve (getStartAndCreateGrid -> (start, grid)) = iterate next seed & takeWhile (not . null) & last & fold & (id *** Set.size) & swap
+ where
+  seed = (MMap.singleton start (1, mempty))
+  next = ifoldMap (move grid)
 
-getStartAndCleanup :: Map k (Maybe b) -> (k, Map k b)
-getStartAndCleanup grid = (Map.toList grid & find (isNothing . snd) & fromJust & fst, Map.mapMaybe id grid)
+getStartAndCreateGrid :: Map (V2 Int) (Maybe Tile) -> (V2 Int, Grid)
+getStartAndCreateGrid grid = (OldMap.toList grid & find (isNothing . snd) & fromJust & fst, OldMap.mapMaybe id grid & OldMap.toList & MMap.fromList)
 
 run :: String -> IO ()
 run input = do

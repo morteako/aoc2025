@@ -71,6 +71,7 @@ dependencies:
   - mod
   - pqueue
   - bytestring-trie
+  - monoidal-containers
 
 library:
   source-dirs: src/lib
