@@ -8,6 +8,7 @@ import Day.Day03 qualified
 import Day.Day04 qualified
 import Day.Day05 qualified
 import Day.Day06 qualified
+import Day.Day07 qualified
 
 import DayVersion
 import Utils ((=:))
@@ -21,4 +22,5 @@ solutions =
     , "4" =: Day.Day04.run
     , "5" =: Day.Day05.run
     , "6" =: Day.Day06.run
+    , "7" =: Day.Day07.run
     ]
