@@ -58,7 +58,7 @@ solveB poses = productOf (both . _x) $ shortestConnections !! (ind - 1)
 
   initMap = Map.fromListIndexed poses & fmap Set.singleton
 
-addPair :: (Show a, Ord a) => Map Int (Set.Set a) -> (a, a) -> Map Int (Set.Set a)
+addPair :: Map Int (Set.Set (V3 Integer)) -> (V3 Integer, V3 Integer) -> Map Int (Set.Set (V3 Integer))
 addPair curs (x, y) =
   case (findSet x, findSet y) of
     (Nothing, Nothing) ->
