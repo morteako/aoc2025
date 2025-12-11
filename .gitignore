@@ -87,3 +87,6 @@ bench.html
 .env
 
 t20.py
+
+
+*.cabal
