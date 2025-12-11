@@ -72,6 +72,8 @@ dependencies:
   - pqueue
   - bytestring-trie
   - monoidal-containers
+  - primes
+  - sbv
 
 library:
   source-dirs: src/lib
