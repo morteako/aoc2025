@@ -27,6 +27,7 @@ library
       Day.Day06
       Day.Day07
       Day.Day08
+      Day.Day10
       Day.DayTemplate
       DayVersion
       IS
@@ -84,8 +85,10 @@ library
     , mtl
     , ordered-containers
     , pqueue
+    , primes
     , raw-strings-qq
     , safe
+    , sbv
     , split
     , stringsearch
     , template-haskell
@@ -153,8 +156,10 @@ executable app
     , optparse-applicative
     , ordered-containers
     , pqueue
+    , primes
     , raw-strings-qq
     , safe
+    , sbv
     , split
     , stringsearch
     , template-haskell
